@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    dynamic:
+      primary: master
+      seata: false
+      datasource:
+        master:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.bidding.url}
+          username: ${datasource.bidding.username}
+          password: ${datasource.bidding.password}
