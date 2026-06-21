@@ -1,0 +1,84 @@
+package org.dromara.bidding.controller;
+
+import java.util.List;
+
+import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.*;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.dromara.common.idempotent.annotation.RepeatSubmit;
+import org.dromara.common.log.annotation.Log;
+import org.dromara.common.web.core.BaseController;
+import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.core.domain.R;
+import org.dromara.common.core.validate.AddGroup;
+import org.dromara.common.core.validate.EditGroup;
+import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.excel.utils.ExcelUtil;
+import org.dromara.bidding.domain.vo.AnnouncementItemVo;
+import org.dromara.bidding.domain.bo.AnnouncementItemBo;
+import org.dromara.bidding.service.IAnnouncementItemService;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
+
+/**
+ * 竞价标的
+ * 前端访问路由地址为:/bidding/announcementItem
+ *
+ * @author ljs
+ * @date 2026-06-21
+ */
+@Validated
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/announcementItem")
+public class AnnouncementItemController extends BaseController {
+
+    private final IAnnouncementItemService announcementItemService;
+
+    @SaCheckPermission("bidding:announcementItem:list")
+    @GetMapping("/list")
+    public TableDataInfo<AnnouncementItemVo> list(AnnouncementItemBo bo, PageQuery pageQuery) {
+        return announcementItemService.queryPageList(bo, pageQuery);
+    }
+
+    @SaCheckPermission("bidding:announcementItem:export")
+    @Log(title = "竞价标的", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(AnnouncementItemBo bo, HttpServletResponse response) {
+        List<AnnouncementItemVo> list = announcementItemService.queryList(bo);
+        ExcelUtil.exportExcel(list, "竞价标的", AnnouncementItemVo.class, response);
+    }
+
+    @SaCheckPermission("bidding:announcementItem:query")
+    @GetMapping("/{id}")
+    public R<AnnouncementItemVo> getInfo(@NotNull(message = "主键不能为空")
+                                     @PathVariable("id") Long id) {
+        return R.ok(announcementItemService.queryById(id));
+    }
+
+    @SaCheckPermission("bidding:announcementItem:add")
+    @Log(title = "竞价标的", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping()
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody AnnouncementItemBo bo) {
+        return toAjax(announcementItemService.insertByBo(bo));
+    }
+
+    @SaCheckPermission("bidding:announcementItem:edit")
+    @Log(title = "竞价标的", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping()
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody AnnouncementItemBo bo) {
+        return toAjax(announcementItemService.updateByBo(bo));
+    }
+
+    @SaCheckPermission("bidding:announcementItem:remove")
+    @Log(title = "竞价标的", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+                          @PathVariable("ids") Long[] ids) {
+        return toAjax(announcementItemService.deleteWithValidByIds(List.of(ids), true));
+    }
+}
