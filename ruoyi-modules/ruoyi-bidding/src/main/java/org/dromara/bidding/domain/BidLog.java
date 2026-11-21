@@ -50,7 +50,7 @@ public class BidLog extends TenantEntity {
     private Long userId;
 
     /**
-     * 本次出价总金额
+     * 买家报出的单位重量溢价金额
      */
     private BigDecimal bidPrice;
 
@@ -58,6 +58,11 @@ public class BidLog extends TenantEntity {
      * 本次出价折算单价
      */
     private BigDecimal bidPriceUnit;
+
+    /**
+     * 折算出的成交总金额(总重量*折算单价)
+     */
+    private BigDecimal bidTotalMoney;
 
     /**
      * 应标意向数量/重量

@@ -11,6 +11,7 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.dromara.auth.domain.vo.LoginVo;
 import org.dromara.auth.form.SocialLoginBody;
 import org.dromara.auth.service.IAuthStrategy;
+import org.dromara.auth.service.SysLoginService;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
@@ -40,6 +41,7 @@ import java.util.Optional;
 public class SocialAuthStrategy implements IAuthStrategy {
 
     private final SocialProperties socialProperties;
+    private final SysLoginService loginService;
 
     @DubboReference
     private RemoteSocialService remoteSocialService;
@@ -82,6 +84,8 @@ public class SocialAuthStrategy implements IAuthStrategy {
         LoginUser loginUser = remoteUserService.getUserInfo(socialVo.getUserId(), socialVo.getTenantId());
         loginUser.setClientKey(client.getClientKey());
         loginUser.setDeviceType(client.getDeviceType());
+        loginService.enrichBuyerLoginUser(loginUser);
+        loginService.fillChannelCode(loginUser, loginBody.getChannelCode());
         SaLoginParameter model = new SaLoginParameter();
         model.setDeviceType(client.getDeviceType());
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置

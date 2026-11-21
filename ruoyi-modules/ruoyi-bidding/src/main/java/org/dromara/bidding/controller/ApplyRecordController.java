@@ -19,6 +19,8 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.bidding.domain.vo.ApplyRecordVo;
 import org.dromara.bidding.domain.bo.ApplyRecordBo;
+import org.dromara.bidding.domain.bo.AuditBuyerApplyBo;
+import org.dromara.bidding.domain.bo.SubmitBidApplyBo;
 import org.dromara.bidding.service.IApplyRecordService;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
@@ -64,6 +66,23 @@ public class ApplyRecordController extends BaseController {
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ApplyRecordBo bo) {
         return toAjax(applyRecordService.insertByBo(bo));
+    }
+
+    @Log(title = "买家提交竞价报名", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/submit")
+    public R<Void> submit(@Validated @RequestBody SubmitBidApplyBo bo) {
+        applyRecordService.submitBidApply(bo);
+        return R.ok();
+    }
+
+    @SaCheckPermission("bidding:applyRecord:audit")
+    @Log(title = "审核买家报名", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/audit")
+    public R<Void> audit(@Validated @RequestBody AuditBuyerApplyBo bo) {
+        applyRecordService.auditBuyerApply(bo);
+        return R.ok();
     }
 
     @SaCheckPermission("bidding:applyRecord:edit")

@@ -37,6 +37,8 @@ import org.dromara.system.api.domain.bo.RemoteUserBo;
 import org.dromara.system.api.domain.vo.RemoteSocialVo;
 import org.dromara.system.api.domain.vo.RemoteTenantVo;
 import org.dromara.system.api.model.LoginUser;
+import org.dromara.user.api.RemoteUserBizService;
+import org.dromara.user.api.domain.RemoteBuyerContextBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +63,8 @@ public class SysLoginService {
     private RemoteTenantService remoteTenantService;
     @DubboReference
     private RemoteSocialService remoteSocialService;
+    @DubboReference
+    private RemoteUserBizService remoteUserBizService;
 
     @Autowired
     private UserPasswordProperties userPasswordProperties;
@@ -232,6 +236,38 @@ public class SysLoginService {
 
         // 登录成功 清空错误次数
         RedisUtils.deleteObject(errorKey);
+    }
+
+    /**
+     * 登录前补齐买家业务字段（userinfoCode / distLevelId），写入 Token Session。
+     * 无对应 um_userinfo 时跳过（如后台 sys_user）。
+     */
+    public void enrichBuyerLoginUser(LoginUser loginUser) {
+        if (loginUser == null || loginUser.getUserId() == null) {
+            return;
+        }
+        try {
+            RemoteBuyerContextBo ctx = remoteUserBizService.getBuyerContext(loginUser.getUserId());
+            if (ctx == null) {
+                return;
+            }
+            if (StringUtils.isBlank(loginUser.getUserinfoCode())) {
+                loginUser.setUserinfoCode(ctx.getUserinfoCode());
+            }
+            loginUser.setDistLevelId(ctx.getDistLevelId());
+        } catch (Exception e) {
+            log.warn("登录补齐买家上下文失败 userId={}", loginUser.getUserId(), e);
+        }
+    }
+
+    /**
+     * 写入登录渠道（空则 default）
+     */
+    public void fillChannelCode(LoginUser loginUser, String channelCode) {
+        if (loginUser == null) {
+            return;
+        }
+        loginUser.setChannelCode(StringUtils.blankToDefault(channelCode, LoginHelper.DEFAULT_CHANNEL_CODE));
     }
 
     /**

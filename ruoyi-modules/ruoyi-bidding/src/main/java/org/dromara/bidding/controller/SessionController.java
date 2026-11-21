@@ -74,6 +74,16 @@ public class SessionController extends BaseController {
         return toAjax(sessionService.updateByBo(bo));
     }
 
+    @SaCheckPermission("bidding:session:approve")
+    @Log(title = "竞价场次", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/approve/{id}")
+    public R<Void> approve(@NotNull(message = "主键不能为空")
+                           @PathVariable("id") Long id) {
+        sessionService.approveAnnouncement(id);
+        return R.ok();
+    }
+
     @SaCheckPermission("bidding:session:remove")
     @Log(title = "竞价场次", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")

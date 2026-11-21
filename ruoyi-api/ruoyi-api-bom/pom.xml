@@ -48,6 +48,48 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 营销中心接口 -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-pm</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 业务用户中心接口（与 system 系统用户无关） -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-user</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 商品中心接口 -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-goods</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 分销中心接口 -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-dis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 订单中心接口 -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-order</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 支付中心接口 -->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-api-pay</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

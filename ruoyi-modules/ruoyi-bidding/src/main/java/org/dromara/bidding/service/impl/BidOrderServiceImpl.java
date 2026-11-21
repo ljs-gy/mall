@@ -10,13 +10,18 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.dromara.bidding.domain.AnnouncementItem;
 import org.dromara.bidding.domain.bo.BidOrderBo;
 import org.dromara.bidding.domain.vo.BidOrderVo;
 import org.dromara.bidding.domain.BidOrder;
+import org.dromara.bidding.mapper.AnnouncementItemMapper;
 import org.dromara.bidding.mapper.BidOrderMapper;
 import org.dromara.bidding.service.IBidOrderService;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
+import org.dromara.common.redis.utils.SequenceUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -33,6 +38,7 @@ import java.util.Collection;
 public class BidOrderServiceImpl implements IBidOrderService {
 
     private final BidOrderMapper baseMapper;
+    private final AnnouncementItemMapper announcementItemMapper;
 
     @Override
     public BidOrderVo queryById(Long id){
@@ -92,5 +98,46 @@ public class BidOrderServiceImpl implements IBidOrderService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void generateStrikeOrder(Long itemId) {
+        AnnouncementItem item = announcementItemMapper.selectById(itemId);
+        if (item == null) {
+            log.warn("标的 {} 不存在，跳过生单", itemId);
+            return;
+        }
+        if (item.getCurrentMaxUserId() == null
+            || item.getTotalBidCount() == null
+            || item.getTotalBidCount() <= 0) {
+            log.info("标的 {} 无人出价，不生单", itemId);
+            return;
+        }
+        Long exists = baseMapper.selectCount(Wrappers.<BidOrder>lambdaQuery()
+            .eq(BidOrder::getItemId, itemId));
+        if (exists != null && exists > 0) {
+            log.info("标的 {} 已存在订单，跳过重复生单", itemId);
+            return;
+        }
+
+        BidOrder order = new BidOrder();
+        order.setOrderNo(SequenceUtils.getDateTimeId("BO", true));
+        order.setSessionId(item.getSessionId());
+        order.setItemId(itemId);
+        order.setUserId(item.getCurrentMaxUserId());
+        order.setStrikePrice(defaultZero(item.getAuctionGinfoPrice()));
+        order.setQuantity(defaultZero(item.getGoodsQuantity()));
+        order.setTotalGoodsAmount(defaultZero(item.getAuctionGinfoMoney()));
+        order.setDepositOffsetAmount(BigDecimal.ZERO);
+        order.setCommissionAmount(BigDecimal.ZERO);
+        order.setFinalPendingAmount(defaultZero(item.getAuctionGinfoMoney()));
+        order.setOrderStatus(0);
+        baseMapper.insert(order);
+        log.info("标的 {} 落槌生单成功，订单号 {}", itemId, order.getOrderNo());
+    }
+
+    private BigDecimal defaultZero(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 }

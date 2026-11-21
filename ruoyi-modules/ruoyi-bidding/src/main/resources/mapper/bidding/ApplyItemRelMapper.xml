@@ -4,4 +4,26 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.dromara.bidding.mapper.ApplyItemRelMapper">
 
+    <select id="countDuplicateItems" resultType="int">
+        SELECT COUNT(DISTINCT rel.item_id)
+        FROM bid_apply_item_rel rel
+        INNER JOIN bid_apply_record rec ON rec.id = rel.apply_id AND rec.del_flag = '0'
+        WHERE rec.user_id = #{userId}
+          AND rec.session_id = #{sessionId}
+          AND rec.tenant_id = #{tenantId}
+          AND rec.audit_status IN (0, 1)
+          AND rel.del_flag = '0'
+          AND rel.item_id IN
+        <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </select>
+
+    <select id="selectItemIdsByApplyId" resultType="long">
+        SELECT item_id
+        FROM bid_apply_item_rel
+        WHERE apply_id = #{applyId}
+          AND del_flag = '0'
+    </select>
+
 </mapper>

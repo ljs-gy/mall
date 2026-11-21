@@ -56,9 +56,9 @@ public class BidLogVo implements Serializable {
     private Long userId;
 
     /**
-     * 本次出价总金额
+     * 买家报出的单位重量溢价金额
      */
-    @ExcelProperty(value = "本次出价总金额")
+    @ExcelProperty(value = "单位重量溢价金额")
     private BigDecimal bidPrice;
 
     /**
@@ -66,6 +66,12 @@ public class BidLogVo implements Serializable {
      */
     @ExcelProperty(value = "本次出价折算单价")
     private BigDecimal bidPriceUnit;
+
+    /**
+     * 折算出的成交总金额
+     */
+    @ExcelProperty(value = "成交总金额")
+    private BigDecimal bidTotalMoney;
 
     /**
      * 应标意向数量/重量

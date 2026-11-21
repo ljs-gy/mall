@@ -12,6 +12,48 @@ spring:
           url: ${datasource.system-master.url}
           username: ${datasource.system-master.username}
           password: ${datasource.system-master.password}
+        # 竞价库（导入 bid_* 表时选此数据源）
+        bidding:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.bidding.url}
+          username: ${datasource.bidding.username}
+          password: ${datasource.bidding.password}
+        # 营销库（导入 pm_* 表时选此数据源）
+        pm:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.pm.url}
+          username: ${datasource.pm.username}
+          password: ${datasource.pm.password}
+        # 业务用户库（导入业务用户表时选此数据源，与 sys_user 无关）
+        user:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.user.url}
+          username: ${datasource.user.username}
+          password: ${datasource.user.password}
+        # 商品库（导入 goods_* 表时选此数据源）
+        goods:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.goods.url}
+          username: ${datasource.goods.username}
+          password: ${datasource.goods.password}
+        # 分销库（导入 dis_* 表时选此数据源）
+        dis:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.dis.url}
+          username: ${datasource.dis.username}
+          password: ${datasource.dis.password}
+        # 订单库（导入 order_* 表时选此数据源）
+        order:
+          type: ${spring.datasource.type}
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: ${datasource.order.url}
+          username: ${datasource.order.username}
+          password: ${datasource.order.password}
 #        oracle:
 #          type: ${spring.datasource.type}
 #          driverClassName: oracle.jdbc.OracleDriver

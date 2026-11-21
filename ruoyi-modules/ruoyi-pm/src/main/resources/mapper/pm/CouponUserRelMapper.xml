@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.pm.mapper.CouponUserRelMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO pm_coupon_user_rel
+        (id, tenant_id, user_id, coupon_template_id, channel_code, title, coupon_type, img_url,
+         user_coupon_code, min_spend_amount, benefit_value, start_time, end_time, status, del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.tenantId}, #{item.userId}, #{item.couponTemplateId}, #{item.channelCode},
+             #{item.title}, #{item.couponType}, #{item.imgUrl},
+             #{item.userCouponCode}, #{item.minSpendAmount}, #{item.benefitValue}, #{item.startTime}, #{item.endTime},
+             #{item.status}, '0')
+        </foreach>
+    </insert>
+
+    <select id="selectExistingUserIds" resultType="java.lang.Long">
+        SELECT DISTINCT user_id
+        FROM pm_coupon_user_rel
+        WHERE del_flag = '0'
+          AND coupon_template_id = #{templateId}
+          AND user_id IN
+          <foreach collection="userIds" item="uid" open="(" separator="," close=")">
+              #{uid}
+          </foreach>
+    </select>
+
+    <!-- status: 0未使用；有效期 start_time <= now <= end_time -->
+    <select id="selectUnusedCoupons" resultType="org.dromara.pm.domain.CouponUserRel">
+        SELECT id, tenant_id, user_id, coupon_template_id, channel_code, title, coupon_type, img_url,
+               user_coupon_code, min_spend_amount, benefit_value, start_time, end_time, status,
+               create_time, update_time
+        FROM pm_coupon_user_rel
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND user_id = #{userId}
+          AND status = 0
+          AND start_time &lt;= #{now}
+          AND end_time &gt;= #{now}
+        ORDER BY end_time ASC, id ASC
+    </select>
+
+    <!-- 下单核销：0未使用 → 1已使用 -->
+    <update id="useCoupon">
+        UPDATE pm_coupon_user_rel
+        SET status = 1
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND id = #{userCouponId}
+          AND user_id = #{userId}
+          AND status = 0
+    </update>
+
+    <!-- 关单/退券回滚：1已使用 → 0未使用 / 2已过期 -->
+    <update id="rollbackCoupon">
+        UPDATE pm_coupon_user_rel
+        SET status = CASE
+                WHEN end_time IS NOT NULL AND end_time &lt; #{now} THEN 2
+                ELSE 0
+            END
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND id = #{userCouponId}
+          AND user_id = #{userId}
+          AND status = 1
+    </update>
+
+</mapper>

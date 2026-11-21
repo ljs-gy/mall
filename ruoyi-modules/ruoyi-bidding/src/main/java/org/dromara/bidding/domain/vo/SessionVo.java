@@ -71,13 +71,13 @@ public class SessionVo implements Serializable {
      * 精准开拍时刻
      */
     @ExcelProperty(value = "精准开拍时刻")
-    private String startTime;
+    private Date startTime;
 
     /**
      * 精准截拍时刻
      */
     @ExcelProperty(value = "精准截拍时刻")
-    private String endTime;
+    private Date endTime;
 
     /**
      * 竞价交保及报名截止死线
@@ -96,6 +96,33 @@ public class SessionVo implements Serializable {
      */
     @ExcelProperty(value = "绑定的竞价规则ID")
     private Long ruleId;
+
+    @ExcelProperty(value = "竞价模型")
+    private Integer bidModel;
+
+    @ExcelProperty(value = "竞价类型")
+    private Integer bidType;
+
+    @ExcelProperty(value = "最少报名人数")
+    private Integer minApplyUsers;
+
+    @ExcelProperty(value = "可中标人数限制")
+    private Integer maxWinnerUsers;
+
+    @ExcelProperty(value = "是否开启动态延时")
+    private Integer isDelayEnabled;
+
+    @ExcelProperty(value = "延时触发周期(分钟)")
+    private Integer delayTriggerMinutes;
+
+    @ExcelProperty(value = "最大延时时长(分钟)")
+    private Integer maxDelayMinutes;
+
+    @ExcelProperty(value = "佣金类型")
+    private Integer commissionType;
+
+    @ExcelProperty(value = "佣金数值")
+    private BigDecimal commissionValue;
 
     /**
      * 保证金收取方式：1-按场次收门票，2-按具体商品/包裹独立收，3-同时勾选叠加收取
@@ -202,8 +229,11 @@ public class SessionVo implements Serializable {
     /**
      * 审批操作人
      */
-    @ExcelProperty(value = "审批操作人")
-    private String auditUser;
+    @ExcelProperty(value = "审批操作人ID")
+    private Long auditBy;
+
+    @ExcelProperty(value = "审批时间")
+    private Date auditTime;
 
     /**
      * 审批驳回原因/批注

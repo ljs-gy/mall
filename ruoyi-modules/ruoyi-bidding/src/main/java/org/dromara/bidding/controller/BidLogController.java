@@ -19,6 +19,7 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.bidding.domain.vo.BidLogVo;
 import org.dromara.bidding.domain.bo.BidLogBo;
+import org.dromara.bidding.domain.bo.DoBidBo;
 import org.dromara.bidding.service.IBidLogService;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
@@ -64,6 +65,14 @@ public class BidLogController extends BaseController {
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody BidLogBo bo) {
         return toAjax(bidLogService.insertByBo(bo));
+    }
+
+    @Log(title = "买家出价", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/doBid")
+    public R<Void> doBid(@Validated @RequestBody DoBidBo bo) {
+        bidLogService.doBidAdvanced(bo);
+        return R.ok();
     }
 
     @SaCheckPermission("bidding:bidLog:edit")

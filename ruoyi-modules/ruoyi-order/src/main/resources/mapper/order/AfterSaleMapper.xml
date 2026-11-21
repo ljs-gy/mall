@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.order.mapper.AfterSaleMapper">
+
+    <!-- 审核 CAS：仅 status=fromStatus 时可更新 -->
+    <update id="auditByStatusCas">
+        UPDATE oc_after_sale
+        SET status = #{toStatus},
+            audit_time = #{auditTime},
+            audit_by = #{auditBy},
+            audit_remark = #{auditRemark},
+            receiver_name = #{receiverName},
+            receiver_mobile = #{receiverMobile},
+            receiver_address = #{receiverAddress},
+            update_time = #{auditTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND after_sale_no = #{afterSaleNo}
+          AND status = #{fromStatus}
+    </update>
+
+    <!-- 买家填快递 CAS：20 → 30，且尚未填写单号 -->
+    <update id="fillReturnExpressCas">
+        UPDATE oc_after_sale
+        SET status = #{toStatus},
+            return_express_company = #{returnExpressCompany},
+            return_express_no = #{returnExpressNo},
+            return_time = #{returnTime},
+            update_time = #{returnTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND after_sale_no = #{afterSaleNo}
+          AND status = #{fromStatus}
+          AND (return_express_no IS NULL OR return_express_no = '')
+    </update>
+
+    <!-- 验货 CAS：30 → 40/90 -->
+    <update id="inspectByStatusCas">
+        UPDATE oc_after_sale
+        SET status = #{toStatus},
+            inspect_time = #{inspectTime},
+            inspect_remark = #{inspectRemark},
+            update_time = #{inspectTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND after_sale_no = #{afterSaleNo}
+          AND status = #{fromStatus}
+    </update>
+
+    <!-- 退款成功 CAS：40 → 50 -->
+    <update id="refundSuccessByStatusCas">
+        UPDATE oc_after_sale
+        SET status = #{toStatus},
+            refund_time = #{refundTime},
+            refund_trade_no = #{refundTradeNo},
+            update_time = #{refundTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND after_sale_no = #{afterSaleNo}
+          AND status = #{fromStatus}
+    </update>
+
+    <!-- 买家撤销 CAS：fromStatus → 99（待审核10，或退货退款待退货20） -->
+    <update id="revokeByStatusCas">
+        UPDATE oc_after_sale
+        SET status = #{toStatus},
+            update_time = #{updateTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND after_sale_no = #{afterSaleNo}
+          AND status = #{fromStatus}
+    </update>
+
+</mapper>

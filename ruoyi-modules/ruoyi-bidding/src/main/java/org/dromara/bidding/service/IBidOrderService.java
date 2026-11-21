@@ -65,4 +65,11 @@ public interface IBidOrderService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 截拍落槌后根据中标标的生成竞价订单
+     *
+     * @param itemId 标的ID
+     */
+    void generateStrikeOrder(Long itemId);
 }

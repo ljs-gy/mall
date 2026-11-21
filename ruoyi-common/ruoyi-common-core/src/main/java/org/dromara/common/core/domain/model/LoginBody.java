@@ -31,6 +31,11 @@ public class LoginBody {
     private String tenantId;
 
     /**
+     * 销售渠道编码（空则默认 default）
+     */
+    private String channelCode;
+
+    /**
      * 验证码
      */
     private String code;

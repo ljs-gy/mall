@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.order.mapper.ShippingOrderMapper">
+
+    <update id="shipByStatusCas">
+        UPDATE oc_shipping_order
+        SET shipping_status = #{toStatus},
+            express_company = #{expressCompany},
+            express_no = #{expressNo},
+            shipping_time = #{shippingTime},
+            update_time = #{shippingTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND shipping_no = #{shippingNo}
+          AND shipping_status = #{fromStatus}
+    </update>
+
+    <update id="receiveByOrderNoCas">
+        UPDATE oc_shipping_order
+        SET shipping_status = #{toStatus},
+            receive_time = #{receiveTime},
+            update_time = #{receiveTime}
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND order_no = #{orderNo}
+          AND shipping_status = #{fromStatus}
+    </update>
+
+</mapper>

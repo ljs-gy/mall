@@ -14,6 +14,12 @@
         <module>ruoyi-api-resource</module>
         <module>ruoyi-api-workflow</module>
         <module>ruoyi-api-bidding</module>
+        <module>ruoyi-api-pm</module>
+        <module>ruoyi-api-user</module>
+        <module>ruoyi-api-goods</module>
+        <module>ruoyi-api-dis</module>
+        <module>ruoyi-api-order</module>
+        <module>ruoyi-api-pay</module>
     </modules>
 
     <artifactId>ruoyi-api</artifactId>

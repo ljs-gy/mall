@@ -15,6 +15,7 @@ security:
       - /*/error
       - /csrf
       - /warm-flow-ui/**
+      - /pay/wx/notify
 
 spring:
   cloud:
@@ -68,6 +69,48 @@ spring:
               uri: lb://ruoyi-bidding
               predicates:
                 - Path=/bidding/**
+              filters:
+                - StripPrefix=1
+            # 营销中心服务
+            - id: ruoyi-pm
+              uri: lb://ruoyi-pm
+              predicates:
+                - Path=/pm/**
+              filters:
+                - StripPrefix=1
+            # 业务用户中心服务（与 system 系统用户无关）
+            - id: ruoyi-user
+              uri: lb://ruoyi-user
+              predicates:
+                - Path=/user/**
+              filters:
+                - StripPrefix=1
+            # 商品中心服务
+            - id: ruoyi-goods
+              uri: lb://ruoyi-goods
+              predicates:
+                - Path=/goods/**
+              filters:
+                - StripPrefix=1
+            # 分销中心服务
+            - id: ruoyi-dis
+              uri: lb://ruoyi-dis
+              predicates:
+                - Path=/dis/**
+              filters:
+                - StripPrefix=1
+            # 订单中心服务
+            - id: ruoyi-order
+              uri: lb://ruoyi-order
+              predicates:
+                - Path=/order/**
+              filters:
+                - StripPrefix=1
+            # 支付中心服务
+            - id: ruoyi-pay
+              uri: lb://ruoyi-pay
+              predicates:
+                - Path=/pay/**
               filters:
                 - StripPrefix=1
             # warm-flow服务

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.pm.mapper.PromoGoodsSkuMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO pm_promo_goods_sku
+        (id, tenant_id, activity_id, spu_id, sku_id, promo_price, activity_stock,
+         sold_stock, user_limit_qty, version, del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.tenantId}, #{item.activityId}, #{item.spuId}, #{item.skuId},
+             #{item.promoPrice}, #{item.activityStock},
+             #{item.soldStock}, #{item.userLimitQty}, 0, '0')
+        </foreach>
+    </insert>
+
+    <select id="selectListByActivityId" resultType="org.dromara.pm.domain.PromoGoodsSku">
+        SELECT *
+        FROM pm_promo_goods_sku
+        WHERE activity_id = #{activityId}
+          AND del_flag = '0'
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectConflictedSkuIds" resultType="long">
+        SELECT DISTINCT g.sku_id
+        FROM pm_promo_goods_sku g
+        INNER JOIN pm_promo_activity a ON a.id = g.activity_id AND a.del_flag = '0'
+        WHERE g.del_flag = '0'
+          AND g.tenant_id = #{tenantId}
+          AND g.sku_id IN
+          <foreach collection="skuIds" item="skuId" open="(" separator="," close=")">
+              #{skuId}
+          </foreach>
+          AND a.promo_type IN ('SPECIAL_PRICE', 'SECKILL')
+          AND a.status IN (0, 1, 2)
+          AND a.start_time &lt; #{endTime}
+          AND a.end_time &gt; #{startTime}
+          <if test="excludeActivityId != null">
+              AND a.id != #{excludeActivityId}
+          </if>
+    </select>
+
+    <!-- 支付成功：记已售（在线预占只走 Redis，不再使用 locked_stock） -->
+    <update id="confirmPromoStock">
+        UPDATE pm_promo_goods_sku
+        SET sold_stock = IFNULL(sold_stock, 0) + #{qty},
+            version = IFNULL(version, 0) + 1
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND activity_id = #{activityId}
+          AND sku_id = #{skuId}
+          AND (
+              activity_stock = -1
+              OR activity_stock - IFNULL(sold_stock, 0) &gt;= #{qty}
+          )
+    </update>
+
+    <!-- 售后退款：sold 回退 -->
+    <update id="rollbackSoldPromoStock">
+        UPDATE pm_promo_goods_sku
+        SET sold_stock = GREATEST(IFNULL(sold_stock, 0) - #{qty}, 0),
+            version = IFNULL(version, 0) + 1
+        WHERE del_flag = '0'
+          AND tenant_id = #{tenantId}
+          AND activity_id = #{activityId}
+          AND sku_id = #{skuId}
+          AND IFNULL(sold_stock, 0) &gt;= #{qty}
+    </update>
+
+</mapper>

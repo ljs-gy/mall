@@ -2,6 +2,8 @@ package org.dromara.bidding.service;
 
 import org.dromara.bidding.domain.vo.ApplyRecordVo;
 import org.dromara.bidding.domain.bo.ApplyRecordBo;
+import org.dromara.bidding.domain.bo.AuditBuyerApplyBo;
+import org.dromara.bidding.domain.bo.SubmitBidApplyBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 
@@ -65,4 +67,18 @@ public interface IApplyRecordService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 买家提交竞价报名准入申请（支持滚动追加商品补报）
+     *
+     * @param bo 报名申请参数
+     */
+    void submitBidApply(SubmitBidApplyBo bo);
+
+    /**
+     * 运营审核买家报名申请
+     *
+     * @param bo 审核参数
+     */
+    void auditBuyerApply(AuditBuyerApplyBo bo);
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.pm.mapper.PromoScopeUserMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO pm_promo_scope_user
+        (id, tenant_id, source_type, source_id, target_id, del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.tenantId}, #{item.sourceType}, #{item.sourceId},
+             #{item.targetId}, '0')
+        </foreach>
+    </insert>
+
+    <select id="selectListBySourceId" resultType="org.dromara.pm.domain.PromoScopeUser">
+        SELECT *
+        FROM pm_promo_scope_user
+        WHERE source_id = #{sourceId}
+          AND source_type = #{sourceType}
+          AND del_flag = '0'
+    </select>
+
+    <select id="selectUserIdsBySourceId" resultType="long">
+        SELECT target_id
+        FROM pm_promo_scope_user
+        WHERE source_id = #{sourceId}
+          AND source_type = 2
+          AND del_flag = '0'
+    </select>
+
+</mapper>

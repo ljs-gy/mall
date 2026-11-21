@@ -6,6 +6,7 @@ import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
@@ -38,6 +39,9 @@ public class LoginHelper {
     public static final String DEPT_NAME_KEY = "deptName";
     public static final String DEPT_CATEGORY_KEY = "deptCategory";
     public static final String CLIENT_KEY = "clientid";
+    public static final String USERINFO_CODE_KEY = "userinfoCode";
+    public static final String CHANNEL_KEY = "channelCode";
+    public static final String DEFAULT_CHANNEL_CODE = "default";
 
     /**
      * 登录系统 基于 设备类型
@@ -48,6 +52,9 @@ public class LoginHelper {
      */
     public static void login(LoginUser loginUser, SaLoginParameter model) {
         model = ObjectUtil.defaultIfNull(model, new SaLoginParameter());
+        if (StrUtil.isBlank(loginUser.getChannelCode())) {
+            loginUser.setChannelCode(DEFAULT_CHANNEL_CODE);
+        }
         StpUtil.login(loginUser.getLoginId(),
             model.setExtra(TENANT_KEY, loginUser.getTenantId())
                 .setExtra(USER_KEY, loginUser.getUserId())
@@ -55,6 +62,8 @@ public class LoginHelper {
                 .setExtra(DEPT_KEY, loginUser.getDeptId())
                 .setExtra(DEPT_NAME_KEY, loginUser.getDeptName())
                 .setExtra(DEPT_CATEGORY_KEY, loginUser.getDeptCategory())
+                .setExtra(USERINFO_CODE_KEY, loginUser.getUserinfoCode())
+                .setExtra(CHANNEL_KEY, loginUser.getChannelCode())
         );
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
     }
@@ -130,6 +139,82 @@ public class LoginHelper {
      */
     public static String getDeptCategory() {
         return Convert.toStr(getExtra(DEPT_CATEGORY_KEY));
+    }
+
+    /**
+     * 获取当前端身份业务码（买家/商家/运营共用同一字段）
+     */
+    public static String getUserinfoCode() {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser != null && StrUtil.isNotBlank(loginUser.getUserinfoCode())) {
+            return loginUser.getUserinfoCode();
+        }
+        return Convert.toStr(getExtra(USERINFO_CODE_KEY));
+    }
+
+    /**
+     * 当前销售渠道编码（登录写入；空则 default）
+     */
+    public static String getChannelCode() {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser != null && StrUtil.isNotBlank(loginUser.getChannelCode())) {
+            return loginUser.getChannelCode();
+        }
+        String extra = Convert.toStr(getExtra(CHANNEL_KEY));
+        return StrUtil.blankToDefault(extra, DEFAULT_CHANNEL_CODE);
+    }
+
+    /**
+     * 写入当前销售渠道到登录态
+     */
+    public static void setChannelCode(String channelCode) {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser == null) {
+            return;
+        }
+        loginUser.setChannelCode(StrUtil.blankToDefault(channelCode, DEFAULT_CHANNEL_CODE));
+        SaSession session = StpUtil.getTokenSession();
+        if (session != null) {
+            session.set(LOGIN_USER_KEY, loginUser);
+        }
+    }
+
+    /**
+     * 写入当前端身份业务码到登录态（登录补全、商家选店等）
+     */
+    public static void setUserinfoCode(String userinfoCode) {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser == null) {
+            return;
+        }
+        loginUser.setUserinfoCode(userinfoCode);
+        SaSession session = StpUtil.getTokenSession();
+        if (session != null) {
+            session.set(LOGIN_USER_KEY, loginUser);
+        }
+    }
+
+    /**
+     * 当前买家会员/分销等级（登录时写入；未登录或无等级时为 null）
+     */
+    public static Long getDistLevelId() {
+        LoginUser loginUser = getLoginUser();
+        return loginUser == null ? null : loginUser.getDistLevelId();
+    }
+
+    /**
+     * 写入买家等级到登录态（等级变更后刷 Session 用）
+     */
+    public static void setDistLevelId(Long distLevelId) {
+        LoginUser loginUser = getLoginUser();
+        if (loginUser == null) {
+            return;
+        }
+        loginUser.setDistLevelId(distLevelId);
+        SaSession session = StpUtil.getTokenSession();
+        if (session != null) {
+            session.set(LOGIN_USER_KEY, loginUser);
+        }
     }
 
     /**

@@ -69,6 +69,8 @@ public class XcxAuthStrategy implements IAuthStrategy {
         XcxLoginUser loginUser = remoteUserService.getUserInfoByOpenid(openid);
         loginUser.setClientKey(client.getClientKey());
         loginUser.setDeviceType(client.getDeviceType());
+        loginService.enrichBuyerLoginUser(loginUser);
+        loginService.fillChannelCode(loginUser, loginBody.getChannelCode());
 
         SaLoginParameter model = new SaLoginParameter();
         model.setDeviceType(client.getDeviceType());

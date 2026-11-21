@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 import java.math.BigDecimal;
 
 /**
@@ -131,6 +132,12 @@ public class AnnouncementItemVo implements Serializable {
      */
     @ExcelProperty(value = "条目运行状态：0-未开拍, 1-竞价中, 2-已落槌成交, 3-到期流拍, 4-中标后超时未补尾款触发违约")
     private Integer itemStatus;
+
+    @ExcelProperty(value = "初始原定截拍截止时间")
+    private Date originalEndTime;
+
+    @ExcelProperty(value = "当前包裹独立动态截拍截止时间")
+    private Date itemEndTime;
 
     /**
      * 高并发防超卖与并发覆盖乐观锁版本号

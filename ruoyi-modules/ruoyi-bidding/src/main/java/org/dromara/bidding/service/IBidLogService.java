@@ -2,6 +2,7 @@ package org.dromara.bidding.service;
 
 import org.dromara.bidding.domain.vo.BidLogVo;
 import org.dromara.bidding.domain.bo.BidLogBo;
+import org.dromara.bidding.domain.bo.DoBidBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 
@@ -65,4 +66,11 @@ public interface IBidLogService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 买家出价（Lua 原子校验 + MySQL 落库）
+     *
+     * @param bo 出价参数
+     */
+    void doBidAdvanced(DoBidBo bo);
 }

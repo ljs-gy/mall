@@ -63,17 +63,17 @@ public class SessionBo extends BaseEntity {
      */
     private Date bidDate;
 
-    @NotBlank(message = "精准开拍时刻不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "精准开拍时刻不能为空", groups = { AddGroup.class, EditGroup.class })
     /**
      * 精准开拍时刻
      */
-    private String startTime;
+    private Date startTime;
 
-    @NotBlank(message = "精准截拍时刻不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "精准截拍时刻不能为空", groups = { AddGroup.class, EditGroup.class })
     /**
      * 精准截拍时刻
      */
-    private String endTime;
+    private Date endTime;
 
     @NotNull(message = "竞价交保及报名截止死线不能为空", groups = { AddGroup.class, EditGroup.class })
     /**
@@ -91,6 +91,51 @@ public class SessionBo extends BaseEntity {
      * 绑定的竞价规则ID
      */
     private Long ruleId;
+
+    /**
+     * 默认竞价模型：1-自由竞价, 2-公开竞价, 3-拆分竞价, 4-反向公开竞价, 5-反向自由竞价
+     */
+    private Integer bidModel;
+
+    /**
+     * 1-常规竞价，2-资质竞价
+     */
+    private Integer bidType;
+
+    /**
+     * 最少报名人数红线
+     */
+    private Integer minApplyUsers;
+
+    /**
+     * 可中标人数限制
+     */
+    private Integer maxWinnerUsers;
+
+    /**
+     * 是否开启动态延时：0-关闭，1-开启
+     */
+    private Integer isDelayEnabled;
+
+    /**
+     * 单次延时触发周期（分钟）
+     */
+    private Integer delayTriggerMinutes;
+
+    /**
+     * 最大总延时时长（分钟）
+     */
+    private Integer maxDelayMinutes;
+
+    /**
+     * 平台佣金：0-不需要，1-比例，2-固定额度
+     */
+    private Integer commissionType;
+
+    /**
+     * 佣金数值（比例或固定金额快照）
+     */
+    private BigDecimal commissionValue;
 
     @NotNull(message = "保证金收取方式：1-按场次收门票，2-按具体商品/包裹独立收，3-同时勾选叠加收取不能为空", groups = { AddGroup.class, EditGroup.class })
     /**
@@ -182,9 +227,14 @@ public class SessionBo extends BaseEntity {
     private Integer bidStatus;
 
     /**
-     * 审批操作人
+     * 审批操作人ID
      */
-    private String auditUser;
+    private Long auditBy;
+
+    /**
+     * 审批时间
+     */
+    private Date auditTime;
 
     /**
      * 审批驳回原因/批注

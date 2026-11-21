@@ -57,6 +57,7 @@
         <warm-flow.version>1.8.5</warm-flow.version>
         <!-- mq配置 -->
         <rocketmq.version>2.3.5</rocketmq.version>
+        <wechatpay-java.version>0.2.14</wechatpay-java.version>
 
         <!-- 插件版本 -->
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
@@ -361,6 +362,12 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.wechatpay-apiv3</groupId>
+                <artifactId>wechatpay-java</artifactId>
+                <version>${wechatpay-java.version}</version>
             </dependency>
 
             <!-- Warm-Flow国产工作流引擎, 在线文档：http://warm-flow.cn/ -->

@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 竞价标的业务对象 bid_announcement_item
@@ -127,6 +128,16 @@ public class AnnouncementItemBo extends BaseEntity {
      * 条目运行状态：0-未开拍, 1-竞价中, 2-已落槌成交, 3-到期流拍, 4-中标后超时未补尾款触发违约
      */
     private Integer itemStatus;
+
+    /**
+     * 初始原定截拍截止时间
+     */
+    private Date originalEndTime;
+
+    /**
+     * 当前包裹独立动态截拍截止时间
+     */
+    private Date itemEndTime;
 
     /**
      * 高并发防超卖与并发覆盖乐观锁版本号

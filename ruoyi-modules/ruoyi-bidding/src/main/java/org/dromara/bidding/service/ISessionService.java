@@ -65,4 +65,11 @@ public interface ISessionService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 审核通过公告并触发缓存刷新、延迟开拍/截拍
+     *
+     * @param sessionId 场次ID
+     */
+    void approveAnnouncement(Long sessionId);
 }

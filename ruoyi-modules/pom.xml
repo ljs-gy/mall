@@ -15,6 +15,12 @@
         <module>ruoyi-resource</module>
         <module>ruoyi-workflow</module>
         <module>ruoyi-bidding</module>
+        <module>ruoyi-pm</module>
+        <module>ruoyi-user</module>
+        <module>ruoyi-goods</module>
+        <module>ruoyi-dis</module>
+        <module>ruoyi-order</module>
+        <module>ruoyi-pay</module>
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>

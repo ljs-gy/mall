@@ -26,9 +26,25 @@ public class LoginUser implements Serializable {
     private String tenantId;
 
     /**
+     * 当前销售渠道编码
+     */
+    private String channelCode;
+
+    /**
      * 用户ID
      */
     private Long userId;
+
+    /**
+     * 当前端身份业务码（同一字段、按端解释）：
+     * 买家 = 买家 userinfo_code；商家 = 商家/店铺码；运营 = 运营用户码。
+     */
+    private String userinfoCode;
+
+    /**
+     * 买家会员/分销等级 ID（um_userinfo.dist_level_id），登录时写入
+     */
+    private Long distLevelId;
 
     /**
      * 部门ID
