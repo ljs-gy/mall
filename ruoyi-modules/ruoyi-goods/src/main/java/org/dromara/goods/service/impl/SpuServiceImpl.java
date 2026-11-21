@@ -94,8 +94,6 @@ public class SpuServiceImpl implements ISpuService {
         lqw.eq(bo.getSingleWeight() != null, Spu::getSingleWeight, bo.getSingleWeight());
         lqw.eq(bo.getWeight() != null, Spu::getWeight, bo.getWeight());
         lqw.eq(bo.getMinOrderQuantity() != null, Spu::getMinOrderQuantity, bo.getMinOrderQuantity());
-        lqw.eq(StringUtils.isNotBlank(bo.getQualityReport()), Spu::getQualityReport, bo.getQualityReport());
-        lqw.eq(StringUtils.isNotBlank(bo.getTraceReport()), Spu::getTraceReport, bo.getTraceReport());
         lqw.eq(bo.getBizGoodsType() != null, Spu::getBizGoodsType, bo.getBizGoodsType());
         lqw.eq(bo.getPreSaleDeliveryTime() != null, Spu::getPreSaleDeliveryTime, bo.getPreSaleDeliveryTime());
         lqw.eq(bo.getSaleStatus() != null, Spu::getSaleStatus, bo.getSaleStatus());

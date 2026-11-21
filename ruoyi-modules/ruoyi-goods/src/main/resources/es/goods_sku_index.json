@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "sku_id": { "type": "long" },
+      "spu_id": { "type": "long" },
+      "tenant_id": { "type": "keyword" },
+      "sku_code": { "type": "keyword" },
+      "spu_code": { "type": "keyword" },
+      "title": {
+        "type": "text",
+        "fields": {
+          "keyword": { "type": "keyword", "ignore_above": 256 }
+        }
+      },
+      "spec_text": { "type": "keyword", "ignore_above": 512 },
+      "cover_image": { "type": "keyword", "index": false },
+      "price_sales": { "type": "scaled_float", "scaling_factor": 100 },
+      "price_market": { "type": "scaled_float", "scaling_factor": 100 },
+      "stock": { "type": "integer" },
+      "sales_volume": { "type": "integer" },
+      "weight": { "type": "integer" },
+      "create_time": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||epoch_millis"
+      },
+      "category_backend_id": { "type": "long" },
+      "category_frontend_id": { "type": "long" },
+      "brand_id": { "type": "long" },
+      "brand_name": { "type": "keyword" },
+      "goods_class": { "type": "keyword" },
+      "member_code": { "type": "keyword" },
+      "channel_code": { "type": "keyword" },
+      "member_ccode": { "type": "keyword" },
+      "attrs": {
+        "type": "nested",
+        "properties": {
+          "attr_id": { "type": "long" },
+          "option_id": { "type": "long" }
+        }
+      },
+      "sale_status": { "type": "integer" },
+      "sku_sale_status": { "type": "integer" },
+      "audit_status": { "type": "integer" },
+      "del_flag": { "type": "keyword" },
+      "promo_type": { "type": "keyword" },
+      "promo_activity_id": { "type": "long" },
+      "promo_price": { "type": "scaled_float", "scaling_factor": 100 },
+      "promo_status": { "type": "integer" },
+      "promo_start_time": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||epoch_millis"
+      },
+      "promo_end_time": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||epoch_millis"
+      }
+    }
+  }
+}
