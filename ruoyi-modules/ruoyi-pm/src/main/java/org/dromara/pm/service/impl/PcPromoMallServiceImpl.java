@@ -502,7 +502,7 @@ public class PcPromoMallServiceImpl implements IPcPromoMallService {
             } else {
                 Long left = stockMap.get(sku.getSkuId());
                 if (left != null) {
-                    vo.setStock(left.intValue());
+                    vo.setStock(left);
                 }
             }
         } else if (sku.getPromoPrice() != null) {
@@ -607,7 +607,7 @@ public class PcPromoMallServiceImpl implements IPcPromoMallService {
                 if (Long.valueOf(-1L).equals(cfg.getActivityStock())) {
                     vo.setStock(sku.getStock());
                 } else if (StringUtils.isNotBlank(stockValues.get(i))) {
-                    vo.setStock(Integer.valueOf(stockValues.get(i)));
+                    vo.setStock(Long.valueOf(stockValues.get(i)));
                 }
             } else if (sku.getPromoPrice() != null) {
                 vo.setPriceSales(sku.getPromoPrice());

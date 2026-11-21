@@ -22,9 +22,9 @@ public class PcPromoGoodsVo implements Serializable {
     private String coverImage;
     private BigDecimal priceSales;
     private BigDecimal priceMarket;
-    private Integer stock;
-    private Integer salesVolume;
-    private Integer weight;
+    private Long stock;
+    private Long salesVolume;
+    private Long weight;
     private Long categoryBackendId;
     private Long categoryFrontendId;
     private Long brandId;
